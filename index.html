@@ -242,6 +242,43 @@ select {
   color: var(--text);
 }
 
+.drive-source-row {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 8px 20px;
+  border-top: 1px solid var(--surface-muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.drive-source-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.drive-url-input {
+  flex: 1;
+  min-width: 240px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 13px;
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.btn-sm {
+  height: 34px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+
 /* Main Content */
 .main-content {
   max-width: 1440px;
@@ -624,6 +661,18 @@ select {
       </div>
     </div>
 
+    <div class="drive-source-row">
+      <label class="drive-source-label" for="drive-url-input">Google Drive 資料夾：</label>
+      <input
+        type="text"
+        id="drive-url-input"
+        class="drive-url-input"
+        value="https://drive.google.com/drive/folders/1_ePBEHCcs1kaTf-zRGX4BJQG5pS6MTR4"
+        placeholder="貼上 Google Drive 資料夾網址或 Folder ID"
+      />
+      <button id="load-drive-btn" class="btn btn-secondary btn-sm" type="button">載入</button>
+    </div>
+
     <div class="toolbar-inner">
       <div class="toolbar-left">
         <label class="select-all-label">
@@ -701,6 +750,8 @@ const errorState = document.getElementById('error-state');
 const errorText = document.getElementById('error-text');
 const emptyState = document.getElementById('empty-state');
 const retryBtn = document.getElementById('retry-btn');
+const driveUrlInput = document.getElementById('drive-url-input');
+const loadDriveBtn = document.getElementById('load-drive-btn');
 const dynamicPrintStyle = document.getElementById('dynamic-print-style');
 const lightboxModal = document.getElementById('lightbox-modal');
 const lightboxBackdrop = document.getElementById('lightbox-backdrop');
@@ -869,11 +920,25 @@ function updateSubtitle(isExactToday) {
   statusSubtitle.textContent = `2026年 ${label} ${todayTag} · 共 ${state.orders.length} 筆`;
 }
 
+const DEFAULT_DRIVE_URL = 'https://drive.google.com/drive/folders/1_ePBEHCcs1kaTf-zRGX4BJQG5pS6MTR4';
+const savedDriveUrl = localStorage.getItem('wuyi_drive_root');
+if (savedDriveUrl) {
+  driveUrlInput.value = savedDriveUrl;
+}
+
+function getCurrentRootIdParam() {
+  const val = (driveUrlInput.value || DEFAULT_DRIVE_URL).trim();
+  return encodeURIComponent(val || DEFAULT_DRIVE_URL);
+}
+
 async function loadToday(forceRefresh = false) {
   closeLightbox();
   try {
     setLoading(true, '正在從 Google 雲端硬碟讀取今日訂單…');
-    const res = await fetch(`/api/today${forceRefresh ? '?refresh=1' : ''}`);
+    const qs = new URLSearchParams();
+    if (forceRefresh) qs.set('refresh', '1');
+    qs.set('rootId', (driveUrlInput.value || DEFAULT_DRIVE_URL).trim());
+    const res = await fetch(`/api/today?${qs.toString()}`);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || '載入失敗');
 
@@ -986,6 +1051,21 @@ refreshBtn.addEventListener('click', () => {
 
 retryBtn.addEventListener('click', () => {
   loadToday(true);
+});
+
+function handleLoadDriveSource() {
+  const val = driveUrlInput.value.trim() || DEFAULT_DRIVE_URL;
+  driveUrlInput.value = val;
+  localStorage.setItem('wuyi_drive_root', val);
+  loadToday(false);
+}
+
+loadDriveBtn.addEventListener('click', handleLoadDriveSource);
+driveUrlInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    handleLoadDriveSource();
+  }
 });
 
 document.querySelectorAll('.seg-btn').forEach((btn) => {
