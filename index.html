@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>梧藝 WUYI · 當日訂單一鍵列印</title>
+  <style>
+:root {
+  --bg: #f8f5f0;
+  --surface: #ffffff;
+  --surface-muted: #f2ede5;
+  --text: #2a221d;
+  --text-muted: #76685f;
+  --border: #e5ddd3;
+  --accent: #b85d43;
+  --accent-hover: #a04d35;
+  --accent-soft: #f9ece8;
+  --shadow: 0 2px 10px rgba(42, 34, 29, 0.06);
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Top Bar */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(42, 34, 29, 0.04);
+}
+
+.topbar-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 14px 20px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.date-pickers,
+.print-options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+select {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--surface-muted);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #e9e1d6;
+}
+
+.btn-primary {
+  height: 42px;
+  padding: 0 20px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  box-shadow: 0 3px 10px rgba(184, 93, 67, 0.28);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.segmented {
+  display: inline-flex;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.seg-btn {
+  height: 32px;
+  padding: 0 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.seg-btn.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.toggle-label,
+.select-all-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toolbar-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 8px 20px 10px;
+  border-top: 1px solid var(--surface-muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+}
+
+.selection-summary {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.search-input {
+  width: 260px;
+  max-width: 100%;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 13px;
+  color: var(--text);
+}
+
+/* Main Content */
+.main-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.state-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.error-box {
+  border-color: #e2b3aa;
+  background: #fdf4f2;
+  color: #9e3522;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 12px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Screen Grid */
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.order-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.15s ease, border-color 0.15s ease;
+}
+
+.order-card.unchecked {
+  opacity: 0.45;
+  border-style: dashed;
+}
+
+.order-card-header {
+  padding: 10px 12px;
+  background: var(--surface-muted);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.order-checkbox {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.order-index {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 2px 7px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.order-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-image-wrap {
+  padding: 10px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.order-image {
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  object-fit: contain;
+  display: block;
+  cursor: zoom-in;
+  transition: transform 0.15s ease;
+}
+
+.order-image:hover {
+  transform: scale(1.015);
+}
+
+/* Lightbox Modal */
+.lightbox-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(24, 18, 15, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+.lightbox-dialog {
+  position: relative;
+  z-index: 1;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  max-width: min(92vw, 920px);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.lightbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--surface-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.lightbox-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lightbox-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.lightbox-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.lightbox-btn:hover:not(:disabled) {
+  background: #eae2d7;
+}
+
+.lightbox-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.lightbox-close {
+  font-size: 15px;
+}
+
+.lightbox-body {
+  padding: 16px;
+  background: #fff;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-stage {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.lightbox-img {
+  max-width: 100%;
+  max-height: calc(92vh - 96px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  cursor: none;
+  user-select: none;
+}
+
+.lightbox-lens {
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(42, 34, 29, 0.25);
+  background-repeat: no-repeat;
+  background-color: #fff;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .main-content {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .order-card.unchecked,
+  .order-card.filtered-out {
+    display: none !important;
+  }
+
+  .order-card {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border: 1px solid #ddd !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .order-checkbox {
+    display: none !important;
+  }
+
+  .order-card-header {
+    background: #f7f7f7 !important;
+    padding: 4px 8px !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body.hide-print-header .order-card-header {
+    display: none !important;
+  }
+
+  .order-image-wrap {
+    padding: 4px !important;
+  }
+
+  /* Layout 1: 1 per A4 portrait page */
+  body.layout-1 .orders-grid {
+    display: block !important;
+  }
+
+  body.layout-1 .order-card {
+    border: none !important;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  body.layout-1 .order-card:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  body.layout-1 .order-image {
+    max-height: 268mm !important;
+    width: auto !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  /* Layout 2: 2 per A4 landscape page */
+  body.layout-2 .orders-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8mm !important;
+  }
+
+  body.layout-2 .order-image {
+    max-height: 176mm !important;
+  }
+
+  /* Layout 4: 4 per A4 portrait page (2x2) */
+  body.layout-4 .orders-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 5mm !important;
+  }
+
+  body.layout-4 .order-image {
+    max-height: 124mm !important;
+  }
+}
+
+  </style>
+  <style id="dynamic-print-style"></style>
+</head>
+<body class="layout-2">
+  <header class="topbar no-print">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">梧</div>
+        <div>
+          <h1>梧藝 WUYI · 訂單一鍵列印</h1>
+          <p class="subtitle" id="status-subtitle">正在連線 Google 雲端硬碟…</p>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <div class="date-pickers">
+          <select id="month-select" aria-label="選擇月份"></select>
+          <select id="day-select" aria-label="選擇日期"></select>
+          <button id="today-btn" class="btn btn-secondary" type="button">今天</button>
+          <button id="refresh-btn" class="btn btn-secondary" type="button" title="從 Google 雲端重新同步">
+            ↻ 重新整理
+          </button>
+        </div>
+
+        <div class="print-options">
+          <div class="segmented" role="group" aria-label="列印版面">
+            <button type="button" class="seg-btn" data-layout="1">每頁 1 張</button>
+            <button type="button" class="seg-btn active" data-layout="2">每頁 2 張</button>
+            <button type="button" class="seg-btn" data-layout="4">每頁 4 張</button>
+          </div>
+
+          <label class="toggle-label">
+            <input type="checkbox" id="show-header-toggle" checked />
+            <span>列印檔名</span>
+          </label>
+        </div>
+
+        <button id="print-btn" class="btn btn-primary" type="button" disabled>
+          🖨️ 一鍵列印今日訂單 (<span id="print-count">0</span>)
+        </button>
+      </div>
+    </div>
+
+    <div class="toolbar-inner">
+      <div class="toolbar-left">
+        <label class="select-all-label">
+          <input type="checkbox" id="select-all-checkbox" checked />
+          <span>全選</span>
+        </label>
+        <span class="divider"></span>
+        <span class="selection-summary" id="selection-summary">共 0 筆訂單</span>
+      </div>
+      <div class="toolbar-right">
+        <input
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="搜尋取貨時間或姓名（例：3點、張詠晴）"
+        />
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div id="loading-state" class="state-box no-print">
+      <div class="spinner"></div>
+      <p id="loading-text">正在從 Google 雲端硬碟載入今日訂單…</p>
+    </div>
+
+    <div id="error-state" class="state-box error-box no-print hidden">
+      <p id="error-text">載入失敗</p>
+      <button id="retry-btn" class="btn btn-secondary" type="button">重試</button>
+    </div>
+
+    <div id="empty-state" class="state-box no-print hidden">
+      <p>這一天目前沒有任何訂單圖片。</p>
+    </div>
+
+    <section id="orders-grid" class="orders-grid" aria-live="polite"></section>
+  </main>
+
+  <div id="lightbox-modal" class="lightbox-modal no-print hidden" role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+    <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+    <div class="lightbox-dialog">
+      <div class="lightbox-header">
+        <span id="lightbox-title" class="lightbox-title"></span>
+        <div class="lightbox-actions">
+          <button id="lightbox-prev" class="lightbox-btn" type="button" title="上一筆 (←)">‹</button>
+          <button id="lightbox-next" class="lightbox-btn" type="button" title="下一筆 (→)">›</button>
+          <button id="lightbox-close" class="lightbox-btn lightbox-close" type="button" title="關閉 (Esc)">✕</button>
+        </div>
+      </div>
+      <div class="lightbox-body">
+        <div class="lightbox-stage" id="lightbox-stage">
+          <img id="lightbox-img" class="lightbox-img" src="" alt="" />
+          <div id="lightbox-lens" class="lightbox-lens hidden" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+const monthSelect = document.getElementById('month-select');
+const daySelect = document.getElementById('day-select');
+const todayBtn = document.getElementById('today-btn');
+const refreshBtn = document.getElementById('refresh-btn');
+const printBtn = document.getElementById('print-btn');
+const printCountEl = document.getElementById('print-count');
+const statusSubtitle = document.getElementById('status-subtitle');
+const selectionSummary = document.getElementById('selection-summary');
+const selectAllCheckbox = document.getElementById('select-all-checkbox');
+const showHeaderToggle = document.getElementById('show-header-toggle');
+const searchInput = document.getElementById('search-input');
+const ordersGrid = document.getElementById('orders-grid');
+const loadingState = document.getElementById('loading-state');
+const loadingText = document.getElementById('loading-text');
+const errorState = document.getElementById('error-state');
+const errorText = document.getElementById('error-text');
+const emptyState = document.getElementById('empty-state');
+const retryBtn = document.getElementById('retry-btn');
+const dynamicPrintStyle = document.getElementById('dynamic-print-style');
+const lightboxModal = document.getElementById('lightbox-modal');
+const lightboxBackdrop = document.getElementById('lightbox-backdrop');
+const lightboxTitle = document.getElementById('lightbox-title');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxLens = document.getElementById('lightbox-lens');
+const lightboxPrev = document.getElementById('lightbox-prev');
+const lightboxNext = document.getElementById('lightbox-next');
+const lightboxClose = document.getElementById('lightbox-close');
+
+const state = {
+  months: [],
+  days: [],
+  selectedMonthId: null,
+  selectedDayId: null,
+  orders: [],
+  checkedIds: new Set(),
+  layout: '2',
+  searchQuery: '',
+  todayInfo: null,
+  lightboxIndex: -1,
+  zoomLevel: 2.4,
+};
+
+function updatePrintPageOrientation(layout) {
+  const size = layout === '2' ? 'A4 landscape' : 'A4 portrait';
+  dynamicPrintStyle.textContent = `@page { size: ${size}; margin: 8mm; }`;
+  document.body.classList.remove('layout-1', 'layout-2', 'layout-4');
+  document.body.classList.add(`layout-${layout}`);
+}
+
+function setLoading(isLoading, message = '正在從 Google 雲端硬碟載入訂單…') {
+  loadingText.textContent = message;
+  loadingState.classList.toggle('hidden', !isLoading);
+  if (isLoading) {
+    errorState.classList.add('hidden');
+    emptyState.classList.add('hidden');
+    ordersGrid.classList.add('hidden');
+  }
+}
+
+function showError(message) {
+  loadingState.classList.add('hidden');
+  emptyState.classList.add('hidden');
+  ordersGrid.classList.add('hidden');
+  const raw = String(message || '');
+  if (raw.includes('no credentials found') || raw.includes('gdrive auth login')) {
+    errorText.textContent =
+      '尚未取得 Google 雲端硬碟本機授權（且此日期尚未快取）。請在終端機執行一次 `gdrive auth login` 完成登入後再按重試。';
+  } else {
+    errorText.textContent = raw || '無法讀取 Google 雲端硬碟資料';
+  }
+  errorState.classList.remove('hidden');
+}
+
+function populateSelect(selectEl, items, selectedId) {
+  selectEl.innerHTML = '';
+  for (const item of items) {
+    const opt = document.createElement('option');
+    opt.value = item.id;
+    opt.textContent = item.name;
+    if (item.id === selectedId) opt.selected = true;
+    selectEl.appendChild(opt);
+  }
+}
+
+function updateCounts() {
+  const visibleOrders = getFilteredOrders();
+  const checkedVisibleCount = visibleOrders.filter((o) => state.checkedIds.has(o.id)).length;
+  const totalChecked = state.orders.filter((o) => state.checkedIds.has(o.id)).length;
+
+  printCountEl.textContent = String(checkedVisibleCount);
+  printBtn.disabled = checkedVisibleCount === 0;
+
+  if (state.searchQuery.trim()) {
+    selectionSummary.textContent = `篩選顯示 ${visibleOrders.length} 筆 · 已選 ${checkedVisibleCount} 筆要列印`;
+  } else {
+    selectionSummary.textContent = `共 ${state.orders.length} 筆訂單 · 已選 ${totalChecked} 筆`;
+  }
+
+  selectAllCheckbox.checked =
+    visibleOrders.length > 0 && checkedVisibleCount === visibleOrders.length;
+  selectAllCheckbox.indeterminate =
+    checkedVisibleCount > 0 && checkedVisibleCount < visibleOrders.length;
+}
+
+function getFilteredOrders() {
+  const q = state.searchQuery.trim().toLowerCase();
+  if (!q) return state.orders;
+  return state.orders.filter((o) => o.displayName.toLowerCase().includes(q));
+}
+
+function renderOrders() {
+  ordersGrid.innerHTML = '';
+
+  if (state.orders.length === 0) {
+    emptyState.classList.remove('hidden');
+    ordersGrid.classList.add('hidden');
+    updateCounts();
+    return;
+  }
+
+  emptyState.classList.add('hidden');
+  ordersGrid.classList.remove('hidden');
+
+  const q = state.searchQuery.trim().toLowerCase();
+
+  state.orders.forEach((order, idx) => {
+    const isChecked = state.checkedIds.has(order.id);
+    const matchesFilter = !q || order.displayName.toLowerCase().includes(q);
+
+    const card = document.createElement('article');
+    card.className = 'order-card';
+    if (!isChecked) card.classList.add('unchecked');
+    if (!matchesFilter) card.classList.add('filtered-out', 'hidden');
+
+    const header = document.createElement('label');
+    header.className = 'order-card-header';
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.className = 'order-checkbox';
+    cb.checked = isChecked;
+    cb.addEventListener('change', () => {
+      if (cb.checked) state.checkedIds.add(order.id);
+      else state.checkedIds.delete(order.id);
+      card.classList.toggle('unchecked', !cb.checked);
+      updateCounts();
+    });
+
+    const badge = document.createElement('span');
+    badge.className = 'order-index';
+    badge.textContent = `#${idx + 1}`;
+
+    const title = document.createElement('span');
+    title.className = 'order-title';
+    title.textContent = order.displayName;
+    title.title = order.displayName;
+
+    header.append(cb, badge, title);
+
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'order-image-wrap';
+
+    const img = document.createElement('img');
+    img.className = 'order-image';
+    img.src = order.imageUrl;
+    img.alt = order.displayName;
+    img.loading = 'eager';
+    img.title = '點擊放大檢視';
+    img.addEventListener('click', () => openLightbox(order.id));
+
+    imgWrap.appendChild(img);
+    card.append(header, imgWrap);
+    ordersGrid.appendChild(card);
+  });
+
+  updateCounts();
+}
+
+function updateSubtitle(isExactToday) {
+  const monthObj = state.months.find((m) => m.id === state.selectedMonthId);
+  const dayObj = state.days.find((d) => d.id === state.selectedDayId);
+  const label = [monthObj?.name, dayObj?.name].filter(Boolean).join(' ');
+  const todayTag = isExactToday ? '（今日訂單）' : '';
+  statusSubtitle.textContent = `2026年 ${label} ${todayTag} · 共 ${state.orders.length} 筆`;
+}
+
+async function loadToday(forceRefresh = false) {
+  closeLightbox();
+  try {
+    setLoading(true, '正在從 Google 雲端硬碟讀取今日訂單…');
+    const res = await fetch(`/api/today${forceRefresh ? '?refresh=1' : ''}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '載入失敗');
+
+    state.todayInfo = data.today;
+    state.months = data.months || [];
+    state.days = data.days || [];
+    state.selectedMonthId = data.selectedMonthId;
+    state.selectedDayId = data.selectedDayId;
+    state.orders = data.orders || [];
+    state.checkedIds = new Set(state.orders.map((o) => o.id));
+
+    populateSelect(monthSelect, state.months, state.selectedMonthId);
+    populateSelect(daySelect, state.days, state.selectedDayId);
+    setLoading(false);
+    updateSubtitle(data.isExactToday);
+    renderOrders();
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+async function loadDaysForMonth(monthId) {
+  try {
+    setLoading(true, '正在載入該月份日期…');
+    const res = await fetch(`/api/days?monthId=${encodeURIComponent(monthId)}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '載入失敗');
+
+    state.days = data.days || [];
+    state.selectedMonthId = monthId;
+    state.selectedDayId = state.days[0]?.id || null;
+    populateSelect(daySelect, state.days, state.selectedDayId);
+
+    if (state.selectedDayId) {
+      await loadOrdersForDay(state.selectedDayId, false);
+    } else {
+      state.orders = [];
+      state.checkedIds.clear();
+      setLoading(false);
+      updateSubtitle(false);
+      renderOrders();
+    }
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+async function loadOrdersForDay(dayId, forceRefresh = false) {
+  closeLightbox();
+  try {
+    setLoading(true, '正在同步該日訂單圖片…');
+    const res = await fetch(
+      `/api/orders?dayId=${encodeURIComponent(dayId)}${forceRefresh ? '&refresh=1' : ''}`
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '載入失敗');
+
+    state.selectedDayId = dayId;
+    state.orders = data.orders || [];
+    state.checkedIds = new Set(state.orders.map((o) => o.id));
+    setLoading(false);
+
+    const monthObj = state.months.find((m) => m.id === state.selectedMonthId);
+    const dayObj = state.days.find((d) => d.id === state.selectedDayId);
+    const isExactToday = Boolean(
+      state.todayInfo &&
+        monthObj?.name === state.todayInfo.monthName &&
+        dayObj?.name === state.todayInfo.dayName
+    );
+    updateSubtitle(isExactToday);
+    renderOrders();
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+async function waitForVisibleImages() {
+  const imgs = Array.from(ordersGrid.querySelectorAll('.order-card:not(.unchecked):not(.hidden) img'));
+  await Promise.all(
+    imgs.map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    })
+  );
+}
+
+// Event Listeners
+monthSelect.addEventListener('change', () => {
+  loadDaysForMonth(monthSelect.value);
+});
+
+daySelect.addEventListener('change', () => {
+  loadOrdersForDay(daySelect.value, false);
+});
+
+todayBtn.addEventListener('click', () => {
+  loadToday(false);
+});
+
+refreshBtn.addEventListener('click', () => {
+  if (state.selectedDayId) {
+    loadOrdersForDay(state.selectedDayId, true);
+  } else {
+    loadToday(true);
+  }
+});
+
+retryBtn.addEventListener('click', () => {
+  loadToday(true);
+});
+
+document.querySelectorAll('.seg-btn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.seg-btn').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.layout = btn.dataset.layout;
+    updatePrintPageOrientation(state.layout);
+  });
+});
+
+showHeaderToggle.addEventListener('change', () => {
+  document.body.classList.toggle('hide-print-header', !showHeaderToggle.checked);
+});
+
+selectAllCheckbox.addEventListener('change', () => {
+  const visible = getFilteredOrders();
+  if (selectAllCheckbox.checked) {
+    visible.forEach((o) => state.checkedIds.add(o.id));
+  } else {
+    visible.forEach((o) => state.checkedIds.delete(o.id));
+  }
+  renderOrders();
+});
+
+searchInput.addEventListener('input', () => {
+  state.searchQuery = searchInput.value;
+  renderOrders();
+});
+
+printBtn.addEventListener('click', async () => {
+  printBtn.disabled = true;
+  await waitForVisibleImages();
+  printBtn.disabled = false;
+  window.print();
+});
+
+// Lightbox
+function openLightbox(orderId) {
+  const visible = getFilteredOrders();
+  const idx = visible.findIndex((o) => o.id === orderId);
+  if (idx === -1) return;
+  state.lightboxIndex = idx;
+  renderLightbox();
+  lightboxModal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightboxLens.classList.add('hidden');
+  lightboxModal.classList.add('hidden');
+  document.body.style.overflow = '';
+  state.lightboxIndex = -1;
+}
+
+function renderLightbox() {
+  const visible = getFilteredOrders();
+  const order = visible[state.lightboxIndex];
+  if (!order) return closeLightbox();
+  const globalIdx = state.orders.findIndex((o) => o.id === order.id);
+  lightboxTitle.textContent = `#${globalIdx + 1} ${order.displayName}（滑鼠移至圖片可放大，滾輪調整倍率）`;
+  lightboxLens.classList.add('hidden');
+  lightboxImg.src = order.imageUrl;
+  lightboxImg.alt = order.displayName;
+  lightboxPrev.disabled = state.lightboxIndex <= 0;
+  lightboxNext.disabled = state.lightboxIndex >= visible.length - 1;
+}
+
+function updateMagnifier(clientX, clientY) {
+  const rect = lightboxImg.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+  const y = Math.max(0, Math.min(clientY - rect.top, rect.height));
+  const zoom = state.zoomLevel;
+  const lensHalf = lightboxLens.offsetWidth / 2 || 95;
+
+  lightboxLens.style.left = `${x}px`;
+  lightboxLens.style.top = `${y}px`;
+  lightboxLens.style.backgroundImage = `url("${lightboxImg.src}")`;
+  lightboxLens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
+  lightboxLens.style.backgroundPosition = `${lensHalf - x * zoom}px ${lensHalf - y * zoom}px`;
+}
+
+lightboxImg.addEventListener('mouseenter', (e) => {
+  if (!lightboxImg.complete || !lightboxImg.naturalWidth) return;
+  lightboxLens.classList.remove('hidden');
+  updateMagnifier(e.clientX, e.clientY);
+});
+
+lightboxImg.addEventListener('mousemove', (e) => {
+  if (lightboxLens.classList.contains('hidden')) {
+    lightboxLens.classList.remove('hidden');
+  }
+  updateMagnifier(e.clientX, e.clientY);
+});
+
+lightboxImg.addEventListener('mouseleave', () => {
+  lightboxLens.classList.add('hidden');
+});
+
+lightboxImg.addEventListener(
+  'wheel',
+  (e) => {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 0.25 : -0.25;
+    state.zoomLevel = Math.min(4.5, Math.max(1.5, Number((state.zoomLevel + delta).toFixed(2))));
+    updateMagnifier(e.clientX, e.clientY);
+  },
+  { passive: false }
+);
+
+function stepLightbox(delta) {
+  const visible = getFilteredOrders();
+  const next = state.lightboxIndex + delta;
+  if (next >= 0 && next < visible.length) {
+    state.lightboxIndex = next;
+    renderLightbox();
+  }
+}
+
+lightboxClose.addEventListener('click', closeLightbox);
+lightboxBackdrop.addEventListener('click', closeLightbox);
+lightboxPrev.addEventListener('click', () => stepLightbox(-1));
+lightboxNext.addEventListener('click', () => stepLightbox(1));
+
+document.addEventListener('keydown', (e) => {
+  if (lightboxModal.classList.contains('hidden')) return;
+  if (e.key === 'Escape') closeLightbox();
+  else if (e.key === 'ArrowLeft') stepLightbox(-1);
+  else if (e.key === 'ArrowRight') stepLightbox(1);
+});
+
+// Init
+updatePrintPageOrientation(state.layout);
+loadToday(false);
+
+  </script>
+</body>
+</html>
