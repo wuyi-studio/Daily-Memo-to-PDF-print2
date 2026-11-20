@@ -104,7 +104,8 @@ body {
   flex-wrap: wrap;
 }
 
-select {
+select,
+.date-input {
   height: 38px;
   padding: 0 12px;
   border-radius: 8px;
@@ -114,6 +115,18 @@ select {
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+}
+
+.gas-date-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.date-nav-btn {
+  width: 34px;
+  padding: 0;
+  font-size: 16px;
 }
 
 .btn {
@@ -240,6 +253,237 @@ select {
   background: var(--bg);
   font-size: 13px;
   color: var(--text);
+}
+
+.btn-compare {
+  background: #fff7ed;
+  border-color: #fdba74;
+  color: #c2410c;
+}
+
+.btn-compare:hover:not(:disabled) {
+  background: #ffedd5;
+}
+
+.btn-compare.active {
+  background: #ea580c;
+  border-color: #ea580c;
+  color: #fff;
+}
+
+/* Calendar Diff Panel */
+.cal-diff-panel {
+  background: var(--surface);
+  border: 2px solid #fdba74;
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.08);
+}
+
+.cal-diff-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cal-diff-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cal-diff-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cal-summary-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.cal-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--surface-muted);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.cal-pill.matched {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.cal-pill.missing {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.cal-pill.mismatch {
+  background: #ffedd5;
+  border-color: #fdba74;
+  color: #c2410c;
+}
+
+.cal-pill.extra {
+  background: #fef9c3;
+  border-color: #fde047;
+  color: #854d0e;
+}
+
+.cal-diff-section {
+  margin-top: 12px;
+}
+
+.cal-diff-section-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.cal-diff-section-title.missing { color: #b91c1c; }
+.cal-diff-section-title.mismatch { color: #c2410c; }
+.cal-diff-section-title.extra { color: #854d0e; }
+.cal-diff-section-title.matched { color: #166534; }
+
+.cal-missing-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.cal-missing-card {
+  background: #fef2f2;
+  border: 2px solid #f87171;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.cal-mismatch-card {
+  background: #fff7ed;
+  border: 2px solid #fb923c;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.cal-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fff;
+  background: #dc2626;
+  margin-right: 4px;
+}
+
+.cal-tag.time {
+  background: #d97706;
+}
+
+.cal-tag.warn {
+  background: #ea580c;
+}
+
+.cal-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cal-raw {
+  margin-top: 5px;
+  font-size: 12.5px;
+  color: #57534e;
+  word-break: break-word;
+}
+
+.cal-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cal-chip {
+  font-size: 12px;
+  padding: 3px 9px;
+  border-radius: 8px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.cal-chip.extra {
+  background: #fefce8;
+  border-color: #fde047;
+  color: #854d0e;
+}
+
+/* Order Card Diff Highlighting */
+.order-card.diff-mismatch {
+  border: 2.5px solid #ea580c;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.16), var(--shadow);
+}
+
+.order-card.diff-mismatch .order-card-header {
+  background: #ffedd5;
+  border-bottom-color: #fdba74;
+}
+
+.order-card.diff-extra {
+  border: 2.5px solid #ca8a04;
+  box-shadow: 0 0 0 3px rgba(202, 138, 4, 0.15), var(--shadow);
+}
+
+.order-card.diff-extra .order-card-header {
+  background: #fef9c3;
+  border-bottom-color: #fde047;
+}
+
+.order-diff-banner {
+  padding: 7px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  border-bottom: 1px solid var(--border);
+}
+
+.order-diff-banner.mismatch {
+  background: #fff7ed;
+  color: #9a3412;
+  border-bottom-color: #fed7aa;
+}
+
+.order-diff-banner.extra {
+  background: #fefce8;
+  color: #854d0e;
+  border-bottom-color: #fef08a;
+}
+
+.order-diff-banner.matched {
+  background: #f0fdf4;
+  color: #166534;
+  border-bottom-color: #bbf7d0;
 }
 
 /* Main Content */
@@ -516,6 +760,10 @@ select {
     page-break-inside: avoid;
   }
 
+  .order-diff-banner {
+    display: none !important;
+  }
+
   .order-checkbox {
     display: none !important;
   }
@@ -599,9 +847,17 @@ select {
         <div class="date-pickers">
           <select id="month-select" aria-label="選擇月份"></select>
           <select id="day-select" aria-label="選擇日期"></select>
+          <div id="gas-date-controls" class="gas-date-controls hidden">
+            <button id="prev-day-btn" class="btn btn-secondary date-nav-btn" type="button" title="前一天">‹</button>
+            <input id="date-picker" class="date-input" type="date" aria-label="選擇日期" />
+            <button id="next-day-btn" class="btn btn-secondary date-nav-btn" type="button" title="後一天">›</button>
+          </div>
           <button id="today-btn" class="btn btn-secondary" type="button">今天</button>
           <button id="refresh-btn" class="btn btn-secondary" type="button" title="從 Google 雲端重新同步">
             ↻ 重新整理
+          </button>
+          <button id="compare-cal-btn" class="btn btn-compare" type="button" title="與 Google 日曆核對當日訂單並標記差異">
+            📅 跟日曆對訂單
           </button>
         </div>
 
@@ -659,6 +915,8 @@ select {
       <p>這一天目前沒有任何訂單圖片。</p>
     </div>
 
+    <section id="calendar-diff-panel" class="cal-diff-panel no-print hidden" aria-live="polite"></section>
+
     <section id="orders-grid" class="orders-grid" aria-live="polite"></section>
   </main>
 
@@ -683,10 +941,21 @@ select {
   </div>
 
   <script>
+const DEFAULT_WEBHOOK_URL =
+  'https://script.google.com/macros/s/AKfycbyWmZqHYc1THus_JRa54ZDsU3rRck4r4snh_7B3mzjjKXrNLIUTWmibCQQloiSXefL_kQ/exec';
+const DRIVE_FOLDER_ID = '1aFAvK33ML41x0JgHlCF6WcA6006Emq4J';
+const WUYI_CALENDAR_ID =
+  '3270f49615dc743011c0b364d4325f4d373decda693135a144f69917660aa265@group.calendar.google.com';
+
 const monthSelect = document.getElementById('month-select');
 const daySelect = document.getElementById('day-select');
+const gasDateControls = document.getElementById('gas-date-controls');
+const datePicker = document.getElementById('date-picker');
+const prevDayBtn = document.getElementById('prev-day-btn');
+const nextDayBtn = document.getElementById('next-day-btn');
 const todayBtn = document.getElementById('today-btn');
 const refreshBtn = document.getElementById('refresh-btn');
+const compareCalBtn = document.getElementById('compare-cal-btn');
 const printBtn = document.getElementById('print-btn');
 const printCountEl = document.getElementById('print-count');
 const statusSubtitle = document.getElementById('status-subtitle');
@@ -694,6 +963,7 @@ const selectionSummary = document.getElementById('selection-summary');
 const selectAllCheckbox = document.getElementById('select-all-checkbox');
 const showHeaderToggle = document.getElementById('show-header-toggle');
 const searchInput = document.getElementById('search-input');
+const calendarDiffPanel = document.getElementById('calendar-diff-panel');
 const ordersGrid = document.getElementById('orders-grid');
 const loadingState = document.getElementById('loading-state');
 const loadingText = document.getElementById('loading-text');
@@ -712,11 +982,18 @@ const lightboxNext = document.getElementById('lightbox-next');
 const lightboxClose = document.getElementById('lightbox-close');
 
 const state = {
+  mode: isLocalBackendHost() ? 'local' : 'gas',
   months: [],
   days: [],
   selectedMonthId: null,
   selectedDayId: null,
+  selectedDateStr: getTaipeiTodayStr(),
   orders: [],
+  calendarEvents: null,
+  sheetOrders: [],
+  diffByOrderId: new Map(),
+  showCalendarDiff: false,
+  onlyShowDiffCards: false,
   checkedIds: new Set(),
   layout: '2',
   searchQuery: '',
@@ -724,6 +1001,59 @@ const state = {
   lightboxIndex: -1,
   zoomLevel: 2.4,
 };
+
+function isLocalBackendHost() {
+  return location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+}
+
+function getTaipeiTodayStr() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const map = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+  return `${map.year}-${map.month}-${map.day}`;
+}
+
+function shiftDateStr(dateStr, deltaDays) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + deltaDays));
+  const yy = dt.getUTCFullYear();
+  const mm = String(dt.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(dt.getUTCDate()).padStart(2, '0');
+  return `${yy}-${mm}-${dd}`;
+}
+
+function setModeUI(mode) {
+  state.mode = mode;
+  const isGas = mode === 'gas';
+  monthSelect.classList.toggle('hidden', isGas);
+  daySelect.classList.toggle('hidden', isGas);
+  gasDateControls.classList.toggle('hidden', !isGas);
+  if (isGas && datePicker.value !== state.selectedDateStr) {
+    datePicker.value = state.selectedDateStr;
+  }
+}
+
+async function fetchJsonSafe(url) {
+  const res = await fetch(url);
+  const text = await res.text();
+  let data = null;
+  try {
+    data = JSON.parse(text);
+  } catch (_) {
+    const snippet = text.trim().slice(0, 80);
+    const err = new Error(`伺服器回傳非 JSON 格式（HTTP ${res.status}）：${snippet}`);
+    err.isNonJson = true;
+    throw err;
+  }
+  if (!res.ok) {
+    throw new Error((data && data.error) || `請求失敗（HTTP ${res.status}）`);
+  }
+  return data;
+}
 
 function updatePrintPageOrientation(layout) {
   const size = layout === '2' ? 'A4 landscape' : 'A4 portrait';
@@ -789,8 +1119,14 @@ function updateCounts() {
 
 function getFilteredOrders() {
   const q = state.searchQuery.trim().toLowerCase();
-  if (!q) return state.orders;
-  return state.orders.filter((o) => o.displayName.toLowerCase().includes(q));
+  return state.orders.filter((o) => {
+    if (q && !o.displayName.toLowerCase().includes(q)) return false;
+    if (state.showCalendarDiff && state.onlyShowDiffCards) {
+      const diff = state.diffByOrderId.get(o.id);
+      if (!diff || diff.status === 'matched') return false;
+    }
+    return true;
+  });
 }
 
 function renderOrders() {
@@ -810,12 +1146,18 @@ function renderOrders() {
 
   state.orders.forEach((order, idx) => {
     const isChecked = state.checkedIds.has(order.id);
-    const matchesFilter = !q || order.displayName.toLowerCase().includes(q);
+    const diff = state.showCalendarDiff ? state.diffByOrderId.get(order.id) : null;
+    const matchesSearch = !q || order.displayName.toLowerCase().includes(q);
+    const matchesDiffFilter =
+      !state.showCalendarDiff || !state.onlyShowDiffCards || (diff && diff.status !== 'matched');
+    const matchesFilter = matchesSearch && matchesDiffFilter;
 
     const card = document.createElement('article');
     card.className = 'order-card';
     if (!isChecked) card.classList.add('unchecked');
     if (!matchesFilter) card.classList.add('filtered-out', 'hidden');
+    if (diff && diff.status === 'mismatch') card.classList.add('diff-mismatch');
+    else if (diff && diff.status === 'extra') card.classList.add('diff-extra');
 
     const header = document.createElement('label');
     header.className = 'order-card-header';
@@ -841,6 +1183,15 @@ function renderOrders() {
     title.title = order.displayName;
 
     header.append(cb, badge, title);
+    card.appendChild(header);
+
+    if (diff) {
+      const banner = document.createElement('div');
+      banner.className = `order-diff-banner ${diff.status}`;
+      banner.textContent = diff.message;
+      if (diff.calendarTitle) banner.title = diff.calendarTitle;
+      card.appendChild(banner);
+    }
 
     const imgWrap = document.createElement('div');
     imgWrap.className = 'order-image-wrap';
@@ -851,17 +1202,37 @@ function renderOrders() {
     img.alt = order.displayName;
     img.loading = 'eager';
     img.title = '點擊放大檢視';
+    if (order.fallbackImageUrl) {
+      img.addEventListener(
+        'error',
+        () => {
+          if (img.src !== order.fallbackImageUrl) img.src = order.fallbackImageUrl;
+        },
+        { once: true }
+      );
+    }
     img.addEventListener('click', () => openLightbox(order.id));
 
     imgWrap.appendChild(img);
-    card.append(header, imgWrap);
+    card.appendChild(imgWrap);
     ordersGrid.appendChild(card);
   });
 
   updateCounts();
 }
 
+function formatDateSubtitle(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const isToday = dateStr === getTaipeiTodayStr();
+  const todayTag = isToday ? '（今日訂單）' : '';
+  return `${y}年 ${m}月 ${d}日 ${todayTag} · 共 ${state.orders.length} 筆`;
+}
+
 function updateSubtitle(isExactToday) {
+  if (state.mode === 'gas') {
+    statusSubtitle.textContent = formatDateSubtitle(state.selectedDateStr);
+    return;
+  }
   const monthObj = state.months.find((m) => m.id === state.selectedMonthId);
   const dayObj = state.days.find((d) => d.id === state.selectedDayId);
   const label = [monthObj?.name, dayObj?.name].filter(Boolean).join(' ');
@@ -869,13 +1240,62 @@ function updateSubtitle(isExactToday) {
   statusSubtitle.textContent = `2026年 ${label} ${todayTag} · 共 ${state.orders.length} 筆`;
 }
 
+function getSelectedDateStr() {
+  if (state.mode === 'gas') return state.selectedDateStr;
+  const monthObj = state.months.find((m) => m.id === state.selectedMonthId);
+  const dayObj = state.days.find((d) => d.id === state.selectedDayId);
+  const mMatch = (monthObj?.name || '').match(/(\d{1,2})/);
+  const dMatch = (dayObj?.name || '').match(/(\d{1,2})/);
+  if (mMatch && dMatch) {
+    return `2026-${String(mMatch[1]).padStart(2, '0')}-${String(dMatch[1]).padStart(2, '0')}`;
+  }
+  return getTaipeiTodayStr();
+}
+
+async function loadGasDay(dateStr) {
+  closeLightbox();
+  state.selectedDateStr = dateStr;
+  setModeUI('gas');
+  try {
+    setLoading(true, `正在從 Google 雲端讀取 ${dateStr} 訂單與日曆…`);
+    const url = `${DEFAULT_WEBHOOK_URL}?action=checkDayOrders&date=${encodeURIComponent(dateStr)}&folderId=${encodeURIComponent(DRIVE_FOLDER_ID)}&calendarId=${encodeURIComponent(WUYI_CALENDAR_ID)}`;
+    const data = await fetchJsonSafe(url);
+    if (data.status !== 'success') {
+      throw new Error(data.error || '雲端資料讀取失敗');
+    }
+
+    const driveFiles = Array.isArray(data.driveFiles) ? data.driveFiles : [];
+    state.orders = driveFiles.map((f) => ({
+      id: f.id,
+      displayName: String(f.name || '').replace(/\.(png|jpe?g|webp)$/i, ''),
+      imageUrl: `https://drive.google.com/thumbnail?id=${encodeURIComponent(f.id)}&sz=w1600`,
+      fallbackImageUrl: `https://lh3.googleusercontent.com/d/${encodeURIComponent(f.id)}=w1600`,
+    }));
+    state.calendarEvents = Array.isArray(data.calendarEvents) ? data.calendarEvents : [];
+    state.sheetOrders = Array.isArray(data.sheetOrders) ? data.sheetOrders : [];
+    state.checkedIds = new Set(state.orders.map((o) => o.id));
+    state.diffByOrderId.clear();
+
+    setLoading(false);
+    updateSubtitle(dateStr === getTaipeiTodayStr());
+    if (state.showCalendarDiff) {
+      compareOrdersWithCalendar(true);
+    } else {
+      renderOrders();
+    }
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
 async function loadToday(forceRefresh = false) {
+  if (state.mode === 'gas') {
+    return loadGasDay(getTaipeiTodayStr());
+  }
   closeLightbox();
   try {
     setLoading(true, '正在從 Google 雲端硬碟讀取今日訂單…');
-    const res = await fetch(`/api/today${forceRefresh ? '?refresh=1' : ''}`);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || '載入失敗');
+    const data = await fetchJsonSafe(`/api/today${forceRefresh ? '?refresh=1' : ''}`);
 
     state.todayInfo = data.today;
     state.months = data.months || [];
@@ -883,14 +1303,25 @@ async function loadToday(forceRefresh = false) {
     state.selectedMonthId = data.selectedMonthId;
     state.selectedDayId = data.selectedDayId;
     state.orders = data.orders || [];
+    state.calendarEvents = null;
+    state.diffByOrderId.clear();
     state.checkedIds = new Set(state.orders.map((o) => o.id));
 
+    setModeUI('local');
     populateSelect(monthSelect, state.months, state.selectedMonthId);
     populateSelect(daySelect, state.days, state.selectedDayId);
     setLoading(false);
     updateSubtitle(data.isExactToday);
-    renderOrders();
+    if (state.showCalendarDiff) {
+      await compareOrdersWithCalendar(false);
+    } else {
+      renderOrders();
+    }
   } catch (err) {
+    if (err.isNonJson || err.name === 'TypeError') {
+      // No local /api server (e.g. GitHub Pages or static preview) -> switch to GAS mode
+      return loadGasDay(getTaipeiTodayStr());
+    }
     showError(err.message);
   }
 }
@@ -898,9 +1329,7 @@ async function loadToday(forceRefresh = false) {
 async function loadDaysForMonth(monthId) {
   try {
     setLoading(true, '正在載入該月份日期…');
-    const res = await fetch(`/api/days?monthId=${encodeURIComponent(monthId)}`);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || '載入失敗');
+    const data = await fetchJsonSafe(`/api/days?monthId=${encodeURIComponent(monthId)}`);
 
     state.days = data.days || [];
     state.selectedMonthId = monthId;
@@ -925,14 +1354,14 @@ async function loadOrdersForDay(dayId, forceRefresh = false) {
   closeLightbox();
   try {
     setLoading(true, '正在同步該日訂單圖片…');
-    const res = await fetch(
+    const data = await fetchJsonSafe(
       `/api/orders?dayId=${encodeURIComponent(dayId)}${forceRefresh ? '&refresh=1' : ''}`
     );
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || '載入失敗');
 
     state.selectedDayId = dayId;
     state.orders = data.orders || [];
+    state.calendarEvents = null;
+    state.diffByOrderId.clear();
     state.checkedIds = new Set(state.orders.map((o) => o.id));
     setLoading(false);
 
@@ -944,10 +1373,346 @@ async function loadOrdersForDay(dayId, forceRefresh = false) {
         dayObj?.name === state.todayInfo.dayName
     );
     updateSubtitle(isExactToday);
-    renderOrders();
+    if (state.showCalendarDiff) {
+      await compareOrdersWithCalendar(false);
+    } else {
+      renderOrders();
+    }
   } catch (err) {
     showError(err.message);
   }
+}
+
+// ==========================================
+// Calendar Comparison & Highlighting
+// ==========================================
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function normalizeCompareName(str) {
+  if (!str) return '';
+  return str
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
+    .replace(/\(.*?\)|（.*?）/g, '')
+    .replace(/[\s\-_•·‧,，.。:：\/\\*＊!！?？~～]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function normalizeTimeToken(rawTime) {
+  if (!rawTime) return '';
+  return rawTime
+    .replace(/\s+/g, '')
+    .replace(/^0+/, '');
+}
+
+function parseOrderFilenameMeta(displayName) {
+  // e.g. "1121 3點 安", "1121 4點半 蔡文綺", "1121 6點10 秦", "1121 丞翎", "1121 7點 Win.（有二顆）"
+  let rest = String(displayName || '').trim();
+  rest = rest.replace(/^\d{4}\s+/, '');
+  let time12 = '';
+  const mTime = rest.match(/^(\d{1,2}\s*點(?:\s*半|\s*\d{1,2}分?)?)\s+(.+)$/);
+  if (mTime) {
+    time12 = normalizeTimeToken(mTime[1]);
+    rest = mTime[2].trim();
+  }
+  const name = rest.replace(/\(.*?\)|（.*?）/g, '').trim();
+  return {
+    time12,
+    name: name || rest,
+    normName: normalizeCompareName(name || rest),
+  };
+}
+
+function isCalendarEventForTargetDate(title, targetDateStr) {
+  // Filter out non-order markers
+  if (/^(?:0\.滿|00\.|滿單|公休|休息|現貨|搜尋|建立|日曆)/.test(title)) return false;
+  if (/^(?:WUYI\s*--\s*202\d|00\.\s*新)/.test(title)) return false;
+
+  const looksLikeOrder =
+    /\d{1,2}[.\/-]\d{1,2}/.test(title) ||
+    /\d{1,2}\s*點/.test(title) ||
+    /[💐🎂🍔🌹🌸🔥🔫✅✍🏻\*＊]/.test(title);
+  if (!looksLikeOrder) return false;
+
+  // Check if title explicitly mentions a different MM/DD outside parentheses (e.g. "11/22只有花" on 11/21 all-day boundary)
+  const [, mmStr, ddStr] = targetDateStr.split('-');
+  const targetM = Number(mmStr);
+  const targetD = Number(ddStr);
+  const withoutParens = title.replace(/\(.*?\)|（.*?）/g, '');
+  const dateMatches = [...withoutParens.matchAll(/(?:^|[^\d])(\d{1,2})[.\/-](\d{1,2})(?:[^\d]|$)/g)];
+  if (dateMatches.length > 0) {
+    const anyMatchesTarget = dateMatches.some(
+      (m) => Number(m[1]) === targetM && Number(m[2]) === targetD
+    );
+    if (!anyMatchesTarget) return false;
+  }
+  return true;
+}
+
+function parseCalendarEventMeta(title) {
+  let time12 = '';
+  let name = '';
+
+  const mA = title.match(
+    /(?:\d{1,2}[.\/-]\d{1,2}\s*[\/／]\s*)?(\d{1,2}\s*點(?:\s*半|\s*\d{1,2}分?)?)\s+(.+)/
+  );
+  if (mA) {
+    time12 = normalizeTimeToken(mA[1]);
+    const rest = mA[2].trim();
+    const mName = rest.match(/^([^\s*＊🍔💐🎂🌹🌸🔥🔫✅✍🏻(（\-－]+)/);
+    name = mName ? mName[1].trim() : rest.split(/\s+/)[0];
+  } else {
+    const mB = title.match(/^([^\s💐🎂🍔🌹🌸🔥🔫✅✍🏻*＊(（\d]+)/);
+    if (mB) name = mB[1].trim();
+  }
+
+  return {
+    rawTitle: title,
+    time12,
+    displayName: name || title,
+    normName: normalizeCompareName(name),
+  };
+}
+
+function doesCalendarEventMatchOrder(ev, ordMeta, fullNormName) {
+  if (!ev.normName) return false;
+  const c = ordMeta.normName;
+  if (c) {
+    if (c === ev.normName) return true;
+    if (c.length >= 2 && ev.normName.length >= 2 && (c.includes(ev.normName) || ev.normName.includes(c))) {
+      return true;
+    }
+    if (ev.normName.length === 1 && (c === ev.normName || c.endsWith(ev.normName) || c.startsWith(ev.normName))) {
+      return true;
+    }
+  }
+  if (fullNormName && ev.normName.length >= 2 && fullNormName.includes(ev.normName)) {
+    return true;
+  }
+  return false;
+}
+
+async function ensureCalendarEventsForDate(dateStr) {
+  if (Array.isArray(state.calendarEvents)) return state.calendarEvents;
+  const url = `${DEFAULT_WEBHOOK_URL}?action=getCalendarEvents&date=${encodeURIComponent(dateStr)}&calendarId=${encodeURIComponent(WUYI_CALENDAR_ID)}`;
+  const data = await fetchJsonSafe(url);
+  if (!data || !Array.isArray(data.events)) {
+    throw new Error('無法讀取 Google 日曆資料');
+  }
+  state.calendarEvents = data.events;
+  return state.calendarEvents;
+}
+
+async function compareOrdersWithCalendar(useCachedOnly = false) {
+  const dateStr = getSelectedDateStr();
+  state.showCalendarDiff = true;
+  compareCalBtn.classList.add('active');
+
+  if (!useCachedOnly && !Array.isArray(state.calendarEvents)) {
+    calendarDiffPanel.classList.remove('hidden');
+    calendarDiffPanel.innerHTML = `<div class="cal-diff-title">⏳ 正在從 Google 日曆讀取 ${escapeHtml(dateStr)} 行程並核對…</div>`;
+    try {
+      await ensureCalendarEventsForDate(dateStr);
+    } catch (err) {
+      calendarDiffPanel.innerHTML = `<div class="cal-diff-title" style="color:#b91c1c;">❌ 日曆讀取失敗：${escapeHtml(err.message)}</div>`;
+      return;
+    }
+  }
+
+  const rawEvents = state.calendarEvents || [];
+  const calEvents = rawEvents
+    .map((ev) => String(ev.title || ev.summary || '').trim())
+    .filter((t) => t && isCalendarEventForTargetDate(t, dateStr))
+    .map(parseCalendarEventMeta);
+
+  const orderMetas = state.orders.map((o) => ({
+    order: o,
+    meta: parseOrderFilenameMeta(o.displayName),
+    fullNorm: normalizeCompareName(o.displayName),
+  }));
+
+  const matchedOrderIndices = new Set();
+  const missingFromDrive = [];
+  const mismatched = [];
+  const matched = [];
+  state.diffByOrderId.clear();
+
+  for (const ev of calEvents) {
+    let bestIdx = -1;
+    for (let i = 0; i < orderMetas.length; i++) {
+      if (matchedOrderIndices.has(i)) continue;
+      if (doesCalendarEventMatchOrder(ev, orderMetas[i].meta, orderMetas[i].fullNorm)) {
+        if (bestIdx === -1) {
+          bestIdx = i;
+        } else if (
+          ev.time12 &&
+          orderMetas[i].meta.time12 === ev.time12 &&
+          orderMetas[bestIdx].meta.time12 !== ev.time12
+        ) {
+          bestIdx = i;
+        }
+      }
+    }
+
+    if (bestIdx === -1) {
+      missingFromDrive.push(ev);
+      continue;
+    }
+
+    matchedOrderIndices.add(bestIdx);
+    const { order, meta } = orderMetas[bestIdx];
+
+    if (ev.time12 && meta.time12 !== ev.time12) {
+      const reason = meta.time12
+        ? `時間不同：日曆「${ev.time12}」≠ 訂單「${meta.time12}」`
+        : `訂單檔名未標時間（日曆為「${ev.time12}」）`;
+      mismatched.push({ ev, order, meta, reason });
+      state.diffByOrderId.set(order.id, {
+        status: 'mismatch',
+        message: `⚠️ ${reason}`,
+        calendarTitle: ev.rawTitle,
+      });
+    } else {
+      matched.push({ ev, order, meta });
+      state.diffByOrderId.set(order.id, {
+        status: 'matched',
+        message: `✅ 已對上日曆：${ev.rawTitle}`,
+        calendarTitle: ev.rawTitle,
+      });
+    }
+  }
+
+  const extraInDrive = [];
+  orderMetas.forEach(({ order, meta }, idx) => {
+    if (!matchedOrderIndices.has(idx)) {
+      extraInDrive.push({ order, meta });
+      state.diffByOrderId.set(order.id, {
+        status: 'extra',
+        message: '⚠️ 日曆未找到此訂單（僅雲端硬碟有）',
+      });
+    }
+  });
+
+  renderCalendarDiffPanel({
+    dateStr,
+    calCount: calEvents.length,
+    missingFromDrive,
+    mismatched,
+    extraInDrive,
+    matched,
+  });
+  renderOrders();
+}
+
+function renderCalendarDiffPanel({ dateStr, calCount, missingFromDrive, mismatched, extraInDrive, matched }) {
+  const diffTotal = missingFromDrive.length + mismatched.length + extraInDrive.length;
+  let html = `
+    <div class="cal-diff-header">
+      <h2 class="cal-diff-title">📅 日曆對單結果（${escapeHtml(dateStr)}）</h2>
+      <div class="cal-diff-actions">
+        <label class="toggle-label">
+          <input type="checkbox" id="only-diff-toggle" ${state.onlyShowDiffCards ? 'checked' : ''} />
+          <span>只顯示有差異的訂單卡片</span>
+        </label>
+        <button type="button" id="close-diff-panel-btn" class="btn btn-secondary">關閉比對</button>
+      </div>
+    </div>
+    <div class="cal-summary-bar">
+      <span class="cal-pill">📅 日曆有效訂單：${calCount} 筆</span>
+      <span class="cal-pill">📁 雲端訂單圖片：${state.orders.length} 筆</span>
+      <span class="cal-pill matched">✅ 完全一致：${matched.length} 筆</span>
+      <span class="cal-pill ${missingFromDrive.length > 0 ? 'missing' : 'matched'}">🔴 日曆有／雲端缺少：${missingFromDrive.length} 筆</span>
+      <span class="cal-pill ${mismatched.length > 0 ? 'mismatch' : 'matched'}">🟠 時間／標記差異：${mismatched.length} 筆</span>
+      <span class="cal-pill ${extraInDrive.length > 0 ? 'extra' : 'matched'}">🟡 僅雲端有／日曆無：${extraInDrive.length} 筆</span>
+    </div>
+  `;
+
+  if (diffTotal === 0) {
+    html += `<div style="padding:10px 14px;background:#dcfce7;border:1px solid #86efac;border-radius:10px;color:#166534;font-weight:700;font-size:13.5px;">🎉 太棒了！日曆與雲端硬碟訂單完全一致，沒有任何差異或漏單！</div>`;
+  }
+
+  if (missingFromDrive.length > 0) {
+    html += `
+      <div class="cal-diff-section">
+        <h3 class="cal-diff-section-title missing">🔴 日曆有紀錄，但雲端硬碟缺少（${missingFromDrive.length} 筆）：</h3>
+        <div class="cal-missing-list">
+          ${missingFromDrive
+            .map(
+              (ev) => `
+            <div class="cal-missing-card">
+              <div>
+                <span class="cal-tag">缺少訂單</span>
+                ${ev.time12 ? `<span class="cal-tag time">${escapeHtml(ev.time12)}</span>` : ''}
+                <span class="cal-name">${escapeHtml(ev.displayName)}</span>
+              </div>
+              <div class="cal-raw">${escapeHtml(ev.rawTitle)}</div>
+            </div>
+          `
+            )
+            .join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  if (mismatched.length > 0) {
+    html += `
+      <div class="cal-diff-section">
+        <h3 class="cal-diff-section-title mismatch">🟠 名稱有對上，但時間／內容不一樣（${mismatched.length} 筆，下方卡片已橘框標記）：</h3>
+        <div class="cal-missing-list">
+          ${mismatched
+            .map(
+              (m) => `
+            <div class="cal-mismatch-card">
+              <div>
+                <span class="cal-tag warn">有差異</span>
+                <span class="cal-name">${escapeHtml(m.order.displayName)}</span>
+              </div>
+              <div class="cal-raw" style="color:#9a3412;font-weight:600;">${escapeHtml(m.reason)}</div>
+              <div class="cal-raw">日曆原文：${escapeHtml(m.ev.rawTitle)}</div>
+            </div>
+          `
+            )
+            .join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  if (extraInDrive.length > 0) {
+    html += `
+      <div class="cal-diff-section">
+        <h3 class="cal-diff-section-title extra">🟡 僅雲端硬碟有、日曆未找到（${extraInDrive.length} 筆，下方卡片已黃框標記）：</h3>
+        <div class="cal-chip-list">
+          ${extraInDrive
+            .map((e) => `<span class="cal-chip extra">${escapeHtml(e.order.displayName)}</span>`)
+            .join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  calendarDiffPanel.innerHTML = html;
+  calendarDiffPanel.classList.remove('hidden');
+
+  document.getElementById('only-diff-toggle').addEventListener('change', (e) => {
+    state.onlyShowDiffCards = e.target.checked;
+    renderOrders();
+  });
+
+  document.getElementById('close-diff-panel-btn').addEventListener('click', () => {
+    state.showCalendarDiff = false;
+    state.onlyShowDiffCards = false;
+    compareCalBtn.classList.remove('active');
+    calendarDiffPanel.classList.add('hidden');
+    renderOrders();
+  });
 }
 
 async function waitForVisibleImages() {
@@ -972,12 +1737,28 @@ daySelect.addEventListener('change', () => {
   loadOrdersForDay(daySelect.value, false);
 });
 
+datePicker.addEventListener('change', () => {
+  if (datePicker.value) {
+    loadGasDay(datePicker.value);
+  }
+});
+
+prevDayBtn.addEventListener('click', () => {
+  loadGasDay(shiftDateStr(state.selectedDateStr, -1));
+});
+
+nextDayBtn.addEventListener('click', () => {
+  loadGasDay(shiftDateStr(state.selectedDateStr, 1));
+});
+
 todayBtn.addEventListener('click', () => {
   loadToday(false);
 });
 
 refreshBtn.addEventListener('click', () => {
-  if (state.selectedDayId) {
+  if (state.mode === 'gas') {
+    loadGasDay(state.selectedDateStr);
+  } else if (state.selectedDayId) {
     loadOrdersForDay(state.selectedDayId, true);
   } else {
     loadToday(true);
@@ -985,7 +1766,23 @@ refreshBtn.addEventListener('click', () => {
 });
 
 retryBtn.addEventListener('click', () => {
-  loadToday(true);
+  if (state.mode === 'gas') {
+    loadGasDay(state.selectedDateStr);
+  } else {
+    loadToday(true);
+  }
+});
+
+compareCalBtn.addEventListener('click', () => {
+  if (state.showCalendarDiff) {
+    state.showCalendarDiff = false;
+    state.onlyShowDiffCards = false;
+    compareCalBtn.classList.remove('active');
+    calendarDiffPanel.classList.add('hidden');
+    renderOrders();
+  } else {
+    compareOrdersWithCalendar(false);
+  }
 });
 
 document.querySelectorAll('.seg-btn').forEach((btn) => {
@@ -1120,6 +1917,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Init
+setModeUI(state.mode);
 updatePrintPageOrientation(state.layout);
 loadToday(false);
 
