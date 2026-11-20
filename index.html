@@ -1397,26 +1397,48 @@ function escapeHtml(str) {
 function normalizeCompareName(str) {
   if (!str) return '';
   return str
-    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F\u20E3]/gu, '')
+    .replace(/[\u00B2\u00B3\u00B9\u2070-\u209F]/g, '')
     .replace(/\(.*?\)|（.*?）/g, '')
     .replace(/[\s\-_•·‧,，.。:：\/\\*＊!！?？~～]/g, '')
     .toLowerCase()
     .trim();
 }
 
+function extractCompareTokens(normStr) {
+  if (!normStr) return [];
+  const tokens = normStr.match(/[\u4e00-\u9fff]{2,}|[a-z]{2,}/g) || [];
+  return tokens;
+}
+
 function normalizeTimeToken(rawTime) {
   if (!rawTime) return '';
-  return rawTime
-    .replace(/\s+/g, '')
-    .replace(/^0+/, '');
+  let t = rawTime.replace(/\s+/g, '').replace(/\./g, '').replace(/^0+/, '');
+  // Convert 24h "1600" or "16:00" or "7pm" to "4點" / "7點"
+  const m24 = t.match(/^(\d{1,2}):?(\d{2})$/);
+  if (m24) {
+    let h = Number(m24[1]);
+    const min = Number(m24[2]);
+    if (h > 12) h -= 12;
+    if (min === 0) return `${h}點`;
+    if (min === 30) return `${h}點半`;
+    return `${h}點${min}`;
+  }
+  const mPm = t.match(/^(\d{1,2})(?:pm|am)$/i);
+  if (mPm) {
+    return `${Number(mPm[1])}點`;
+  }
+  return t;
 }
 
 function parseOrderFilenameMeta(displayName) {
-  // e.g. "1121 3點 安", "1121 4點半 蔡文綺", "1121 6點10 秦", "1121 丞翎", "1121 7點 Win.（有二顆）"
+  // e.g. "1121 3點 安", "1122 3.點 黃筠淇", "1122 1600 林冠龍", "1122 7pm JYA安安", "1121 丞翎"
   let rest = String(displayName || '').trim();
   rest = rest.replace(/^\d{4}\s+/, '');
   let time12 = '';
-  const mTime = rest.match(/^(\d{1,2}\s*點(?:\s*半|\s*\d{1,2}分?)?)\s+(.+)$/);
+  const mTime = rest.match(
+    /^(\d{1,2}\.?\s*點(?:\s*半|\s*\d{1,2}分?)?|\d{1,2}:?\d{2}|\d{1,2}\s*(?:pm|am))\s+(.+)$/i
+  );
   if (mTime) {
     time12 = normalizeTimeToken(mTime[1]);
     rest = mTime[2].trim();
@@ -1459,8 +1481,10 @@ function parseCalendarEventMeta(title) {
   let time12 = '';
   let name = '';
 
-  const mA = title.match(
-    /(?:\d{1,2}[.\/-]\d{1,2}\s*[\/／]\s*)?(\d{1,2}\s*點(?:\s*半|\s*\d{1,2}分?)?)\s+(.+)/
+  // Strip leading "11.22/" or "11/22/" if present
+  const stripped = title.replace(/^\d{1,2}[.\/-]\d{1,2}\s*[\/／]\s*/, '');
+  const mA = stripped.match(
+    /^(\d{1,2}\.?\s*點(?:\s*半|\s*\d{1,2}分?)?|上午|下午|中午|晚上)\s+(.+)$/
   );
   if (mA) {
     time12 = normalizeTimeToken(mA[1]);
@@ -1468,9 +1492,12 @@ function parseCalendarEventMeta(title) {
     const mName = rest.match(/^([^\s*＊🍔💐🎂🌹🌸🔥🔫✅✍🏻(（\-－]+)/);
     name = mName ? mName[1].trim() : rest.split(/\s+/)[0];
   } else {
-    const mB = title.match(/^([^\s💐🎂🍔🌹🌸🔥🔫✅✍🏻*＊(（\d]+)/);
+    const mB = stripped.match(/^([^\s💐🎂🍔🌹🌸🔥🔫✅✍🏻*＊(（\d]+)/);
     if (mB) name = mB[1].trim();
   }
+
+  // Strip trailing "2️⃣顆" / "2顆" / "2個" from name (e.g. "hsuan2️⃣顆" -> "hsuan")
+  name = name.replace(/[\uFE0F\u20E3]/g, '').replace(/\d+[顆個]$/g, '').trim();
 
   return {
     rawTitle: title,
@@ -1480,10 +1507,12 @@ function parseCalendarEventMeta(title) {
   };
 }
 
-function doesCalendarEventMatchOrder(ev, ordMeta, fullNormName) {
+function doesCalendarEventMatchOrder(ev, ordMeta, extraCandidates = []) {
   if (!ev.normName) return false;
-  const c = ordMeta.normName;
-  if (c) {
+  const evTokens = extractCompareTokens(ev.normName);
+  const candidates = [ordMeta.normName, ...extraCandidates].filter(Boolean);
+
+  for (const c of candidates) {
     if (c === ev.normName) return true;
     if (c.length >= 2 && ev.normName.length >= 2 && (c.includes(ev.normName) || ev.normName.includes(c))) {
       return true;
@@ -1491,9 +1520,11 @@ function doesCalendarEventMatchOrder(ev, ordMeta, fullNormName) {
     if (ev.normName.length === 1 && (c === ev.normName || c.endsWith(ev.normName) || c.startsWith(ev.normName))) {
       return true;
     }
-  }
-  if (fullNormName && ev.normName.length >= 2 && fullNormName.includes(ev.normName)) {
-    return true;
+    // Token overlap (handles swapped order like "仲樺Steve" vs "Steve仲樺")
+    const cTokens = extractCompareTokens(c);
+    if (evTokens.some((t) => cTokens.includes(t) || c.includes(t)) || cTokens.some((t) => ev.normName.includes(t))) {
+      return true;
+    }
   }
   return false;
 }
@@ -1531,11 +1562,21 @@ async function compareOrdersWithCalendar(useCachedOnly = false) {
     .filter((t) => t && isCalendarEventForTargetDate(t, dateStr))
     .map(parseCalendarEventMeta);
 
-  const orderMetas = state.orders.map((o) => ({
-    order: o,
-    meta: parseOrderFilenameMeta(o.displayName),
-    fullNorm: normalizeCompareName(o.displayName),
-  }));
+  const orderMetas = state.orders.map((o) => {
+    const sheetMatch = (state.sheetOrders || []).find(
+      (s) => s.memo && s.memo.includes(o.displayName)
+    );
+    const extraCandidates = [normalizeCompareName(o.displayName)];
+    if (sheetMatch) {
+      if (sheetMatch.customerName) extraCandidates.push(normalizeCompareName(sheetMatch.customerName));
+      if (sheetMatch.lineName) extraCandidates.push(normalizeCompareName(sheetMatch.lineName));
+    }
+    return {
+      order: o,
+      meta: parseOrderFilenameMeta(o.displayName),
+      extraCandidates,
+    };
+  });
 
   const matchedOrderIndices = new Set();
   const missingFromDrive = [];
@@ -1547,7 +1588,7 @@ async function compareOrdersWithCalendar(useCachedOnly = false) {
     let bestIdx = -1;
     for (let i = 0; i < orderMetas.length; i++) {
       if (matchedOrderIndices.has(i)) continue;
-      if (doesCalendarEventMatchOrder(ev, orderMetas[i].meta, orderMetas[i].fullNorm)) {
+      if (doesCalendarEventMatchOrder(ev, orderMetas[i].meta, orderMetas[i].extraCandidates)) {
         if (bestIdx === -1) {
           bestIdx = i;
         } else if (
